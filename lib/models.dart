@@ -15,6 +15,8 @@ class EdgeModel {
   late double midX, midY;
   bool isSelected = false;
 
+  bool? isMST;
+
   EdgeModel(this.startNode, this.endNode, this.distance, {this.isSelected = false}) {
     midX = (startNode.x + endNode.x) / 2;
     midY = (startNode.y + endNode.y) / 2;
