@@ -2,9 +2,11 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_on_class_011/algorithm.dart';
+import 'package:flutter_on_class_011/components/drawer.dart';
 import 'package:flutter_on_class_011/figs.dart';
 import 'package:flutter_on_class_011/models.dart';
-import 'package:flutter_on_class_011/node_utils.dart';
+import 'package:flutter_on_class_011/utils/node_name_generator.dart';
+import 'package:flutter_on_class_011/utils/node_utils.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -28,6 +30,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
+        drawer: AppDrawer(),
           body: Stack(
             children: [
               GestureDetector(
