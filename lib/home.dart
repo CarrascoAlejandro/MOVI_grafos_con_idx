@@ -143,6 +143,30 @@ class _HomeState extends State<Home> {
                         selectedEdge = -1;
                         print('Edge moved');
                       }
+                    } else if (mode == 8) {
+                      // If tapped on a node, show the Change Node Name Input Dialog
+                      // If tapped on an edge, show the Change Edge Weight Input Dialog
+                      int touchedNode = findTouchedNode(
+                          details.localPosition.dx.toInt(),
+                          details.localPosition.dy.toInt(),
+                          nodes);
+                      if (touchedNode != -1) {
+                        print('Touched node: $touchedNode');
+                        showChangeNodeNameDialog(context, nodes[touchedNode]);
+                      } else {
+                        int touchedEdge = findTouchedEdgeMidpoint(
+                            details.localPosition.dx.toInt(),
+                            details.localPosition.dy.toInt(),
+                            edges);
+                        if (touchedEdge != -1) {
+                          print('Touched edge: $touchedEdge');
+                          //showChangeEdgeWeightDialog(context, edges[touchedEdge]);
+                        }
+                      }
+
+                      // clear the touched node and edge
+                      selectedNode = -1;
+                      selectedEdge = -1;
                     }
                   });
                 },
@@ -244,6 +268,19 @@ class _HomeState extends State<Home> {
                 ),
                 IconButton(
                   onPressed: () {
+                    setState(() {
+                      if (mode == 8) {
+                        mode = 0;
+                      } else {
+                        mode = 8;
+                      }
+                    });
+                  },
+                  icon: const Icon(Icons.edit),
+                  color: (mode == 8) ? Colors.cyan.shade700 : Colors.white,
+                ),
+                IconButton(
+                  onPressed: () {
                     showHelpDialog(context);
                   },
                   icon: const Icon(Icons.help),
@@ -274,6 +311,74 @@ class _HomeState extends State<Home> {
                 Navigator.of(context).pop();
               },
               child: const Text('Close'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> showChangeNodeNameDialog(BuildContext context, NodeModel nod) async {
+    final TextEditingController nodeNameController = TextEditingController();
+    nodeNameController.text = nod.label;
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Change Node Name'),
+          content: TextField(
+            controller: nodeNameController,
+            decoration: const InputDecoration(labelText: 'Node Name'),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                setState(() {
+                  nod.label = nodeNameController.text;
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<void> showChangeEdgeWeightDialog(BuildContext context, EdgeModel edg) async {
+    final TextEditingController edgeWeightController = TextEditingController();
+    edgeWeightController.text = edg.distance.toString();
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Change Edge Weight'),
+          content: TextField(
+            controller: edgeWeightController,
+            decoration: const InputDecoration(labelText: 'Edge Weight'),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                setState(() {
+                  edg.distance = double.parse(edgeWeightController.text);
+                });
+                Navigator.of(context).pop();
+              },
             ),
           ],
         );
