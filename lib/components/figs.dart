@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_on_class_011/models.dart';
+import 'package:flutter_on_class_011/models/edge_model.dart';
+import 'package:flutter_on_class_011/models/node_model.dart';
 import 'package:flutter_on_class_011/utils/node_utils.dart';
 
 class NodePainter extends CustomPainter {

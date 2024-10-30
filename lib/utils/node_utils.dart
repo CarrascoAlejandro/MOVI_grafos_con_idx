@@ -1,4 +1,6 @@
-import 'package:flutter_on_class_011/models.dart';
+import 'package:flutter_on_class_011/models/node_model.dart';
+import 'package:flutter_on_class_011/models/edge_model.dart';
+
 import 'dart:math';
 
 int findTouchedNode(int x, int y, List<NodeModel> nodes) {

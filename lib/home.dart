@@ -1,10 +1,11 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_on_class_011/algorithm.dart';
+import 'package:flutter_on_class_011/utils/algorithm.dart';
 import 'package:flutter_on_class_011/components/drawer.dart';
-import 'package:flutter_on_class_011/figs.dart';
-import 'package:flutter_on_class_011/models.dart';
+import 'package:flutter_on_class_011/components/figs.dart';
+import 'package:flutter_on_class_011/models/node_model.dart';
+import 'package:flutter_on_class_011/models/edge_model.dart';
 import 'package:flutter_on_class_011/utils/node_name_generator.dart';
 import 'package:flutter_on_class_011/utils/node_utils.dart';
 
