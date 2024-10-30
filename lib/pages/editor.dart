@@ -9,14 +9,14 @@ import 'package:flutter_on_class_011/models/edge_model.dart';
 import 'package:flutter_on_class_011/utils/node_name_generator.dart';
 import 'package:flutter_on_class_011/utils/node_utils.dart';
 
-class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
+class Editor extends StatefulWidget {
+  const Editor({Key? key}) : super(key: key);
 
   @override
-  _HomeState createState() => _HomeState();
+  _EditorState createState() => _EditorState();
 }
 
-class _HomeState extends State<Home> {
+class _EditorState extends State<Editor> {
   List<NodeModel> nodes = [];
   List<EdgeModel> edges = [];
   NextNodeNameGenerator nextNodeNameGenerator = NextNodeNameGenerator(true);
@@ -31,7 +31,9 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        drawer: AppDrawer(),
+        appBar: AppBar(
+          title: const Text('Editor'),
+        ),
           body: Stack(
             children: [
               GestureDetector(
@@ -164,7 +166,7 @@ class _HomeState extends State<Home> {
                             edges);
                         if (touchedEdge != -1) {
                           print('Touched edge: $touchedEdge');
-                          //showChangeEdgeWeightDialog(context, edges[touchedEdge]);
+                          showChangeEdgeWeightDialog(context, edges[touchedEdge]);
                         }
                       }
 

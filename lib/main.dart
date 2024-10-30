@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_on_class_011/home.dart';
+import 'package:flutter_on_class_011/pages/home.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,6 +11,9 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return Home();
+    return MaterialApp(
+      title: 'Grafos',
+      home: Home(),
+    );
   }
 }
