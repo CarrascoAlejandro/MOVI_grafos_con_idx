@@ -1,3 +1,4 @@
+import 'package:flutter_on_class_011/constants/ui_constants.dart';
 import 'package:flutter_on_class_011/models/node_model.dart';
 import 'package:flutter_on_class_011/models/edge_model.dart';
 
@@ -17,10 +18,10 @@ int findTouchedNode(int x, int y, List<NodeModel> nodes) {
 
 int findTouchedEdgeMidpoint(int x, int y, List<EdgeModel> edges) {
   for (int i = 0; i < edges.length; i++) {
-    if (x >= edges[i].midX - 5 &&
-        x <= edges[i].midX + 5 &&
-        y >= edges[i].midY - 5 &&
-        y <= edges[i].midY + 5) {
+    if (x >= edges[i].midX - edgeTouchRadius &&
+        x <= edges[i].midX + edgeTouchRadius &&
+        y >= edges[i].midY - edgeTouchRadius &&
+        y <= edges[i].midY + edgeTouchRadius) {
       return i;
     }
   }

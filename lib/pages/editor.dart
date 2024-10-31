@@ -49,7 +49,6 @@ class _EditorState extends State<Editor> {
                       nodes.add(NodeModel(
                           details.localPosition.dx,
                           details.localPosition.dy,
-                          20.0,
                           Colors.teal,
                           nextNodeNameGenerator.getNextNodeName()));
                       print('Node added ${nodes.length}');
