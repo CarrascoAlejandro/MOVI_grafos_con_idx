@@ -83,8 +83,17 @@ class _EditorState extends State<Editor> {
                         for (var edge in edges) {
                           if (edge.startNode == nodes[selectedNode] ||
                               edge.endNode == nodes[selectedNode]) {
-                            edge.midX = (edge.startNode.x + edge.endNode.x) / 2;
-                            edge.midY = (edge.startNode.y + edge.endNode.y) / 2;
+                                if(isMidpointOOB(
+                                  edge.startNode.x,
+                                  edge.startNode.y,
+                                  edge.endNode.x,
+                                  edge.endNode.y,
+                                  edge.midX,
+                                  edge.midY
+                                )){
+                                  edge.midX = (edge.startNode.x + edge.endNode.x) / 2;
+                                  edge.midY = (edge.startNode.y + edge.endNode.y) / 2;
+                                }
                           }
                         }
 
@@ -121,19 +130,19 @@ class _EditorState extends State<Editor> {
                         }
                       } else {
                         // move the selected edge midpoint to the new position
-                        if (isMidpointOOB(
-                            details.localPosition.dx,
-                            details.localPosition.dy,
+                        if (!isMidpointOOB(
                             edges[selectedEdge].startNode.x,
                             edges[selectedEdge].startNode.y,
                             edges[selectedEdge].endNode.x,
-                            edges[selectedEdge].endNode.y)) {
+                            edges[selectedEdge].endNode.y,
+                            details.localPosition.dx,
+                            details.localPosition.dy)) {
                           edges[selectedEdge].midX = details.localPosition.dx;
                           edges[selectedEdge].midY = details.localPosition.dy;
                         } else {
                           print(
                               'Midpoint out of bounds capping to the maximum circle');
-                          /* var cappedPoint = closestPointInBounds(
+                           var cappedPoint = closestPointInBounds(
                           details.localPosition.dx,
                           details.localPosition.dy,
                           edges[selectedEdge].startNode.x,
@@ -141,8 +150,9 @@ class _EditorState extends State<Editor> {
                           edges[selectedEdge].endNode.x,
                           edges[selectedEdge].endNode.y
                         );
+                          print('Capped point: $cappedPoint');
                         edges[selectedEdge].midX = cappedPoint[0];
-                        edges[selectedEdge].midY = cappedPoint[1]; */
+                        edges[selectedEdge].midY = cappedPoint[1]; 
                         }
                         edges[selectedEdge].isSelected = false;
                         selectedEdge = -1;
