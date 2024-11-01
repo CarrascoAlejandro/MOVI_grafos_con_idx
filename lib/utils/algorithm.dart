@@ -1,7 +1,14 @@
 import 'package:flutter_on_class_011/models/edge_model.dart';
 import 'package:flutter_on_class_011/models/node_model.dart';
 
-void KruskalMST(List<NodeModel> nodes, List<EdgeModel> edges) {
+void KruskalMST(List<NodeModel> nodes, List<EdgeModel> edges, bool maximum) {
+  // If maximum is true, invert the sign of the distances
+  if (maximum) {
+    for (EdgeModel edge in edges) {
+      edge.distance = -edge.distance;
+    }
+  }
+
   // Sort edges by weight
   edges.sort((a, b) => a.distance.compareTo(b.distance));
 
@@ -31,6 +38,11 @@ void KruskalMST(List<NodeModel> nodes, List<EdgeModel> edges) {
     edge.isMST = mst.contains(edge);
   }
 
-  // Update the state
-  // setState(() {});
+  // after the algorithm is done, revert the sign of the distances if maximum is true
+  if (maximum) {
+    for (EdgeModel edge in edges) {
+      edge.distance = -edge.distance;
+    }
+  }
+  
 }

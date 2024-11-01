@@ -23,6 +23,7 @@ class _EditorState extends State<Editor> {
   int mode = 0;
   int selectedNode = -1;
   int selectedEdge = -1;
+  bool kruskalMSTmaximized = true;
 
   // Random
   Random random = Random();
@@ -31,9 +32,9 @@ class _EditorState extends State<Editor> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Editor'),
-        ),
+          appBar: AppBar(
+            title: const Text('Editor'),
+          ),
           body: Stack(
             children: [
               GestureDetector(
@@ -83,17 +84,18 @@ class _EditorState extends State<Editor> {
                         for (var edge in edges) {
                           if (edge.startNode == nodes[selectedNode] ||
                               edge.endNode == nodes[selectedNode]) {
-                                if(isMidpointOOB(
-                                  edge.startNode.x,
-                                  edge.startNode.y,
-                                  edge.endNode.x,
-                                  edge.endNode.y,
-                                  edge.midX,
-                                  edge.midY
-                                )){
-                                  edge.midX = (edge.startNode.x + edge.endNode.x) / 2;
-                                  edge.midY = (edge.startNode.y + edge.endNode.y) / 2;
-                                }
+                            if (isMidpointOOB(
+                                edge.startNode.x,
+                                edge.startNode.y,
+                                edge.endNode.x,
+                                edge.endNode.y,
+                                edge.midX,
+                                edge.midY)) {
+                              edge.midX =
+                                  (edge.startNode.x + edge.endNode.x) / 2;
+                              edge.midY =
+                                  (edge.startNode.y + edge.endNode.y) / 2;
+                            }
                           }
                         }
 
@@ -142,17 +144,16 @@ class _EditorState extends State<Editor> {
                         } else {
                           print(
                               'Midpoint out of bounds capping to the maximum circle');
-                           var cappedPoint = closestPointInBounds(
-                          details.localPosition.dx,
-                          details.localPosition.dy,
-                          edges[selectedEdge].startNode.x,
-                          edges[selectedEdge].startNode.y,
-                          edges[selectedEdge].endNode.x,
-                          edges[selectedEdge].endNode.y
-                        );
+                          var cappedPoint = closestPointInBounds(
+                              details.localPosition.dx,
+                              details.localPosition.dy,
+                              edges[selectedEdge].startNode.x,
+                              edges[selectedEdge].startNode.y,
+                              edges[selectedEdge].endNode.x,
+                              edges[selectedEdge].endNode.y);
                           print('Capped point: $cappedPoint');
-                        edges[selectedEdge].midX = cappedPoint[0];
-                        edges[selectedEdge].midY = cappedPoint[1]; 
+                          edges[selectedEdge].midX = cappedPoint[0];
+                          edges[selectedEdge].midY = cappedPoint[1];
                         }
                         edges[selectedEdge].isSelected = false;
                         selectedEdge = -1;
@@ -175,7 +176,8 @@ class _EditorState extends State<Editor> {
                             edges);
                         if (touchedEdge != -1) {
                           print('Touched edge: $touchedEdge');
-                          showChangeEdgeWeightDialog(context, edges[touchedEdge]);
+                          showChangeEdgeWeightDialog(
+                              context, edges[touchedEdge]);
                         }
                       }
 
@@ -266,17 +268,44 @@ class _EditorState extends State<Editor> {
                 ),
                 IconButton(
                   onPressed: () {
-                    setState(() {
-                      if (mode == 7) {
+                    if (mode != 7) {
+                      showMenu(
+                        context: context,
+                        position: RelativeRect.fromLTRB(
+                          MediaQuery.of(context).size.width / 2,
+                          MediaQuery.of(context).size.height - 50,
+                          MediaQuery.of(context).size.width / 2,
+                          0,
+                        ),
+                        items: [
+                          PopupMenuItem(
+                            value: 'max',
+                            child: Text('Max'),
+                          ),
+                          PopupMenuItem(
+                            value: 'min',
+                            child: Text('Min'),
+                          ),
+                        ],
+                      ).then((value) {
+                        setState(() {
+                          if (value == 'max') {
+                            kruskalMSTmaximized = true;
+                          } else if (value == 'min') {
+                            kruskalMSTmaximized = false;
+                          }
+                          mode = 7;
+                          KruskalMST(nodes, edges, kruskalMSTmaximized);
+                        });
+                      });
+                    } else if (mode == 7) {
+                      setState(() {
                         mode = 0;
                         for (var edge in edges) {
                           edge.isMST = null;
                         }
-                      } else {
-                        mode = 7;
-                        KruskalMST(nodes, edges);
-                      }
-                    });
+                      });
+                    }
                   },
                   icon: const Icon(Icons.search),
                   color: (mode == 7) ? Colors.cyan.shade700 : Colors.white,
@@ -333,7 +362,8 @@ class _EditorState extends State<Editor> {
     );
   }
 
-  Future<void> showChangeNodeNameDialog(BuildContext context, NodeModel nod) async {
+  Future<void> showChangeNodeNameDialog(
+      BuildContext context, NodeModel nod) async {
     final TextEditingController nodeNameController = TextEditingController();
     nodeNameController.text = nod.label;
     return showDialog<void>(
@@ -367,7 +397,8 @@ class _EditorState extends State<Editor> {
     );
   }
 
-  Future<void> showChangeEdgeWeightDialog(BuildContext context, EdgeModel edg) async {
+  Future<void> showChangeEdgeWeightDialog(
+      BuildContext context, EdgeModel edg) async {
     final TextEditingController edgeWeightController = TextEditingController();
     edgeWeightController.text = edg.distance.toString();
     return showDialog<void>(
