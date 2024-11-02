@@ -208,7 +208,9 @@ class _EditorState extends State<Editor> {
               )
             ],
           ),
-          bottomNavigationBar: BottomAppBar(
+            bottomNavigationBar: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: BottomAppBar(
             color: Colors.blueGrey.shade700,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -324,6 +326,19 @@ class _EditorState extends State<Editor> {
                 ),
                 IconButton(
                   onPressed: () {
+                    setState(() {
+                      if (mode == 5) {
+                        mode = 0;
+                      } else {
+                        mode = 5;
+                      }
+                    });
+                  },
+                  icon: const Icon(Icons.zoom_in),
+                  color: (mode == 5) ? Colors.purple : Colors.white,
+                ),
+                IconButton(
+                  onPressed: () {
                     showHelpDialog(context);
                   },
                   icon: const Icon(Icons.help),
@@ -331,7 +346,7 @@ class _EditorState extends State<Editor> {
                 )
               ],
             ),
-          )),
+          ))),
     );
   }
 
