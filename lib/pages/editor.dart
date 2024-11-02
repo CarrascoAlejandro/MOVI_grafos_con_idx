@@ -68,15 +68,66 @@ class _EditorState extends State<Editor> {
                       }
                     } else if (mode == 3) {
                       if (selectedNode == -1) {
+                        // if no node is selected
                         selectedNode = findTouchedNode(
                             details.localPosition.dx.toInt(),
                             details.localPosition.dy.toInt(),
                             nodes);
                         if (selectedNode != -1) {
+                          // if node was touched in bounds
                           nodes[selectedNode].isSelected = true;
                           print('Node selected $selectedNode');
+                        } else {
+                          // if no node was selected check edges
+                          if (selectedEdge == -1) {
+                            // if no edge is selected
+                            selectedEdge = findTouchedEdgeMidpoint(
+                                details.localPosition.dx.toInt(),
+                                details.localPosition.dy.toInt(),
+                                edges);
+                            if (selectedEdge != -1) {
+                              // if edge was touched in bounds
+                              edges[selectedEdge].isSelected = true;
+                              print('Edge selected $selectedEdge');
+                            } else {
+                              // no edge nor node was touched
+                              print('Nothing selected');
+                            }
+                          } else {
+                            // move the selected edge midpoint to the new position
+                            // as long as it is in bounds otherwise cap it to the maximum circle
+                            if (!isMidpointOOB(
+                                edges[selectedEdge].startNode.x,
+                                edges[selectedEdge].startNode.y,
+                                edges[selectedEdge].endNode.x,
+                                edges[selectedEdge].endNode.y,
+                                details.localPosition.dx,
+                                details.localPosition.dy)) {
+                              edges[selectedEdge].midX =
+                                  details.localPosition.dx;
+                              edges[selectedEdge].midY =
+                                  details.localPosition.dy;
+                            } else {
+                              print(
+                                  'Midpoint out of bounds capping to the maximum circle');
+                              var cappedPoint = closestPointInBounds(
+                                  details.localPosition.dx,
+                                  details.localPosition.dy,
+                                  edges[selectedEdge].startNode.x,
+                                  edges[selectedEdge].startNode.y,
+                                  edges[selectedEdge].endNode.x,
+                                  edges[selectedEdge].endNode.y);
+                              print('Capped point: $cappedPoint');
+                              edges[selectedEdge].midX = cappedPoint[0];
+                              edges[selectedEdge].midY = cappedPoint[1];
+                            }
+                            edges[selectedEdge].isSelected = false;
+                            selectedEdge = -1;
+                            print('Edge moved');
+                          }
                         }
                       } else {
+                        // if a node is already selected move it
                         nodes[selectedNode].x = details.localPosition.dx;
                         nodes[selectedNode].y = details.localPosition.dy;
                         nodes[selectedNode].isSelected = false;
@@ -119,45 +170,6 @@ class _EditorState extends State<Editor> {
                           selectedNode = -1;
                           print('Edge added');
                         }
-                      }
-                    } else if (mode == 5) {
-                      if (selectedEdge == -1) {
-                        selectedEdge = findTouchedEdgeMidpoint(
-                            details.localPosition.dx.toInt(),
-                            details.localPosition.dy.toInt(),
-                            edges);
-                        if (selectedEdge != -1) {
-                          edges[selectedEdge].isSelected = true;
-                          print('Edge selected $selectedEdge');
-                        }
-                      } else {
-                        // move the selected edge midpoint to the new position
-                        if (!isMidpointOOB(
-                            edges[selectedEdge].startNode.x,
-                            edges[selectedEdge].startNode.y,
-                            edges[selectedEdge].endNode.x,
-                            edges[selectedEdge].endNode.y,
-                            details.localPosition.dx,
-                            details.localPosition.dy)) {
-                          edges[selectedEdge].midX = details.localPosition.dx;
-                          edges[selectedEdge].midY = details.localPosition.dy;
-                        } else {
-                          print(
-                              'Midpoint out of bounds capping to the maximum circle');
-                          var cappedPoint = closestPointInBounds(
-                              details.localPosition.dx,
-                              details.localPosition.dy,
-                              edges[selectedEdge].startNode.x,
-                              edges[selectedEdge].startNode.y,
-                              edges[selectedEdge].endNode.x,
-                              edges[selectedEdge].endNode.y);
-                          print('Capped point: $cappedPoint');
-                          edges[selectedEdge].midX = cappedPoint[0];
-                          edges[selectedEdge].midY = cappedPoint[1];
-                        }
-                        edges[selectedEdge].isSelected = false;
-                        selectedEdge = -1;
-                        print('Edge moved');
                       }
                     } else if (mode == 8) {
                       // If tapped on a node, show the Change Node Name Input Dialog
@@ -255,19 +267,6 @@ class _EditorState extends State<Editor> {
                 ),
                 IconButton(
                   onPressed: () {
-                    setState(() {
-                      if (mode == 5) {
-                        mode = 0;
-                      } else {
-                        mode = 5;
-                      }
-                    });
-                  },
-                  icon: const Icon(Icons.back_hand_outlined),
-                  color: (mode == 5) ? Colors.purple : Colors.white,
-                ),
-                IconButton(
-                  onPressed: () {
                     if (mode != 7) {
                       showMenu(
                         context: context,
@@ -342,13 +341,7 @@ class _EditorState extends State<Editor> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Help'),
-          content: const Text('1. Add Node: Tap on the screen to add a node\n'
-              '2. Delete Node: Tap on a node to delete it\n'
-              '3. Move Node: Tap on a node to select it, then tap on another location to move it\n'
-              '4. Add Edge: Tap on a node to select it, then tap on another node to create an edge\n'
-              '5. Move Edge: Tap on an edge to select it, then tap on another location to move the midpoint\n'
-              '6. Find MST: Tap on the search icon to find the minimum spanning tree\n'
-              '7. Help: Tap on the help icon to display this dialog\n'),
+          content: const Text(""),
           actions: <Widget>[
             TextButton(
               onPressed: () {
@@ -406,10 +399,11 @@ class _EditorState extends State<Editor> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Change Edge Weight'),
-          content: TextField(
+            content: TextField(
             controller: edgeWeightController,
             decoration: const InputDecoration(labelText: 'Edge Weight'),
-          ),
+            keyboardType: TextInputType.number,
+            ),
           actions: <Widget>[
             TextButton(
               child: const Text('Cancel'),
