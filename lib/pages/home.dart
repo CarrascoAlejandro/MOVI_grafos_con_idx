@@ -27,6 +27,7 @@ class _HomeState extends State<Home> {
             // Add more items here if needed
             ListTile(
               title: const Text('About'),
+              leading: Icon(Icons.info_outline),
               onTap: () {
                 Navigator.push(
                   context, MaterialPageRoute(builder: (context) => (AboutPage()))
@@ -35,6 +36,7 @@ class _HomeState extends State<Home> {
             ),
             ListTile(
               title: const Text('Editor'),
+              leading: Icon(Icons.insights_rounded),
               onTap: () {
                 Navigator.push(
                   context, MaterialPageRoute(builder: (context) => Editor())
@@ -49,7 +51,7 @@ class _HomeState extends State<Home> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.network('https://via.placeholder.com/400x200', height: 200),
+            Image.network('https://upload.wikimedia.org/wikipedia/commons/d/d2/Minimum_spanning_tree.svg', height: 200),
             const SizedBox(height: 16.0),
             const Text(
               'Kruskal\'s Minimum Spanning Tree',
@@ -61,7 +63,7 @@ class _HomeState extends State<Home> {
               style: TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 16.0),
-            Image.network('https://via.placeholder.com/400x200', height: 200),
+            Image.network('https://images.stockcake.com/public/e/0/7/e07e8b9c-aff2-45bf-aff2-2b12d5df9480_large/industrial-pipe-network-stockcake.jpg', height: 200),
             const SizedBox(height: 16.0),
             const Text(
               'Real-life Applications',
@@ -73,6 +75,20 @@ class _HomeState extends State<Home> {
               '2. Approximation Algorithms: It is used in various approximation algorithms for NP-hard problems, including the traveling salesman problem.\n\n'
               '3. Cluster Analysis: Kruskal\'s algorithm is used in hierarchical clustering to build a minimum spanning tree of the data points.',
               style: TextStyle(fontSize: 16),
+            ),
+            Center(
+              child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                foregroundColor: Colors.white,
+              ),
+              onPressed: () {
+                Navigator.push(
+                context, MaterialPageRoute(builder: (context) => Editor())
+                );
+              },
+              child: const Text('Go to Editor', style: TextStyle(fontSize: 20)),
+              ),
             ),
           ],
         ),

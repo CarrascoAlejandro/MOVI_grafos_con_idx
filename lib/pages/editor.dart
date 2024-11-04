@@ -1,13 +1,14 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_on_class_011/constants/ui_constants.dart';
 import 'package:flutter_on_class_011/utils/algorithm.dart';
-import 'package:flutter_on_class_011/components/drawer.dart';
 import 'package:flutter_on_class_011/components/figs.dart';
 import 'package:flutter_on_class_011/models/node_model.dart';
 import 'package:flutter_on_class_011/models/edge_model.dart';
 import 'package:flutter_on_class_011/utils/node_name_generator.dart';
 import 'package:flutter_on_class_011/utils/node_utils.dart';
+import 'package:flutter_on_class_011/utils/scale_move_utils.dart';
 
 class Editor extends StatefulWidget {
   const Editor({Key? key}) : super(key: key);
@@ -31,9 +32,19 @@ class _EditorState extends State<Editor> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       home: Scaffold(
           appBar: AppBar(
             title: const Text('Editor'),
+            actions: [
+              // Go back to the home page
+              IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: const Icon(Icons.home),
+              ),
+            ],
           ),
           body: Stack(
             children: [
@@ -50,7 +61,7 @@ class _EditorState extends State<Editor> {
                       nodes.add(NodeModel(
                           details.localPosition.dx,
                           details.localPosition.dy,
-                          Colors.teal,
+                          Colors.teal.shade300,
                           nextNodeNameGenerator.getNextNodeName()));
                       print('Node added ${nodes.length}');
                     } else if (mode == 2) {
@@ -65,6 +76,16 @@ class _EditorState extends State<Editor> {
                             edge.endNode == nodes[touchedNode]);
                         nodes.removeAt(touchedNode);
                         print('Node removed $touchedNode');
+                      } else {
+                        // Remove the edge if it was touched
+                        int touchedEdge = findTouchedEdgeMidpoint(
+                            details.localPosition.dx.toInt(),
+                            details.localPosition.dy.toInt(),
+                            edges);
+                        if (touchedEdge != -1) {
+                          edges.removeAt(touchedEdge);
+                          print('Edge removed $touchedEdge');
+                        }
                       }
                     } else if (mode == 3) {
                       if (selectedNode == -1) {
@@ -308,7 +329,7 @@ class _EditorState extends State<Editor> {
                       });
                     }
                   },
-                  icon: const Icon(Icons.search),
+                  icon: const Icon(Icons.insights),
                   color: (mode == 7) ? Colors.cyan.shade700 : Colors.white,
                 ),
                 IconButton(
@@ -322,20 +343,54 @@ class _EditorState extends State<Editor> {
                     });
                   },
                   icon: const Icon(Icons.edit),
-                  color: (mode == 8) ? Colors.cyan.shade700 : Colors.white,
+                  color: (mode == 8) ? Colors.purple.shade700 : Colors.white,
                 ),
                 IconButton(
                   onPressed: () {
-                    setState(() {
-                      if (mode == 5) {
-                        mode = 0;
-                      } else {
-                        mode = 5;
-                      }
+                      showMenu(
+                        context: context,
+                        position: RelativeRect.fromLTRB(
+                          MediaQuery.of(context).size.width / 2,
+                          MediaQuery.of(context).size.height - 50,
+                          MediaQuery.of(context).size.width / 2,
+                          0,
+                        ),
+                        items: [
+                          PopupMenuItem(
+                            value: 'zoomIn',
+                            child: Text('Zoom In'),
+                          ),
+                          PopupMenuItem(
+                            value: 'zoomOut',
+                            child: Text('Zoom Out'),
+                          ),
+                        ],
+                      ).then((value) {
+                        setState(() {
+                          if (value == 'zoomIn'){
+                            nodes.forEach((node) {
+                              node.x = scaleLinearFromCenter(node.x, MediaQuery.of(context).size.width / 2);
+                              node.y = scaleLinearFromCenter(node.y, MediaQuery.of(context).size.height / 2);
+                            });
+                            edges.forEach((edge) {
+                              edge.midX = scaleLinearFromCenter(edge.midX, MediaQuery.of(context).size.width / 2);
+                              edge.midY = scaleLinearFromCenter(edge.midY, MediaQuery.of(context).size.height / 2);
+                            });
+                          } else if (value == 'zoomOut'){
+                            nodes.forEach((node) {
+                              node.x = scaleLinearFromCenter(node.x, MediaQuery.of(context).size.width / 2, 1/defaultScalingFactor);
+                              node.y = scaleLinearFromCenter(node.y, MediaQuery.of(context).size.height / 2, 1/defaultScalingFactor);
+                            });
+                            edges.forEach((edge) {
+                              edge.midX = scaleLinearFromCenter(edge.midX, MediaQuery.of(context).size.width / 2, 1/defaultScalingFactor);
+                              edge.midY = scaleLinearFromCenter(edge.midY, MediaQuery.of(context).size.height / 2, 1/defaultScalingFactor);
+                            });
+                          }
+                      });
                     });
                   },
                   icon: const Icon(Icons.zoom_in),
-                  color: (mode == 5) ? Colors.purple : Colors.white,
+                  color: Colors.white,
                 ),
                 IconButton(
                   onPressed: () {
@@ -356,7 +411,14 @@ class _EditorState extends State<Editor> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Help'),
-          content: const Text(""),
+          content: const Text("1. Add Node: Tap on the screen to add a node\n"
+              "2. Delete Node: Tap on a node or edge to delete it\n"
+              "3. Move Node: Tap on a node or edge to select it, then tap on the screen to move it\n"
+              "4. Add Edge: Tap on a node to select it, then tap on another node to add an edge\n"
+              "5. Find MST: Tap on the screen to find the Minimum Spanning Tree\n"
+              "6. Edit Node/Edge: Tap on a node to change its name, tap on an edge to change its weight\n"
+              "7. Zoom In/Out: Tap on the screen to zoom in/out\n"
+              "8. Help: Tap on the help icon to show this dialog\n"),
           actions: <Widget>[
             TextButton(
               onPressed: () {

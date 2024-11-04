@@ -88,7 +88,7 @@ class EdgePainter extends CustomPainter {
       // Draw the distance text inside the circle
       TextPainter textPainter = TextPainter(
         text: TextSpan(
-          text: edge.distance.toString(),
+          text: edge.distance % 1 == 0 ? edge.distance.toInt().toString() : edge.distance.toString(),
           style: TextStyle(
             color: Colors.white,
             fontSize: 12,
