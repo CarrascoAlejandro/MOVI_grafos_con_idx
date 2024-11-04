@@ -25,6 +25,7 @@ class _EditorState extends State<Editor> {
   int selectedNode = -1;
   int selectedEdge = -1;
   bool kruskalMSTmaximized = true;
+  bool zoomingIn = false;
 
   // Random
   Random random = Random();
@@ -192,6 +193,34 @@ class _EditorState extends State<Editor> {
                           print('Edge added');
                         }
                       }
+                    } else if (mode == 5) {
+                      if (zoomingIn) {
+                        nodes.forEach((node) {
+                          node.x = scaleLinearFromCenter(
+                              node.x, details.localPosition.dx);
+                          node.y = scaleLinearFromCenter(
+                              node.y, details.localPosition.dy);
+                        });
+                        edges.forEach((edge) {
+                          edge.midX = scaleLinearFromCenter(
+                              edge.midX, details.localPosition.dx);
+                          edge.midY = scaleLinearFromCenter(
+                              edge.midY, details.localPosition.dy);
+                        });
+                      } else {
+                        nodes.forEach((node) {
+                          node.x = scaleLinearFromCenter(
+                              node.x, details.localPosition.dx, 1/defaultScalingFactor);
+                          node.y = scaleLinearFromCenter(
+                              node.y, details.localPosition.dy, 1/defaultScalingFactor);
+                        });
+                        edges.forEach((edge) {
+                          edge.midX = scaleLinearFromCenter(
+                              edge.midX, details.localPosition.dx, 1/defaultScalingFactor);
+                          edge.midY = scaleLinearFromCenter(
+                              edge.midY, details.localPosition.dy, 1/defaultScalingFactor);
+                        });
+                      }
                     } else if (mode == 8) {
                       // If tapped on a node, show the Change Node Name Input Dialog
                       // If tapped on an edge, show the Change Edge Weight Input Dialog
@@ -229,179 +258,173 @@ class _EditorState extends State<Editor> {
               )
             ],
           ),
-            bottomNavigationBar: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: BottomAppBar(
-            color: Colors.blueGrey.shade700,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                IconButton(
-                  onPressed: () {
-                    setState(() {
-                      if (mode == 1) {
-                        mode = 0;
-                      } else {
-                        mode = 1;
-                      }
-                    });
-                  },
-                  icon: const Icon(Icons.add),
-                  color: (mode == 1) ? Colors.amber.shade400 : Colors.white,
-                ),
-                IconButton(
-                  onPressed: () {
-                    setState(() {
-                      if (mode == 2) {
-                        mode = 0;
-                      } else {
-                        mode = 2;
-                      }
-                    });
-                  },
-                  icon: const Icon(Icons.delete),
-                  color: (mode == 2) ? Colors.red : Colors.white,
-                ),
-                IconButton(
-                  onPressed: () {
-                    setState(() {
-                      if (mode == 3) {
-                        mode = 0;
-                      } else {
-                        mode = 3;
-                      }
-                    });
-                  },
-                  icon: const Icon(Icons.back_hand_rounded),
-                  color: (mode == 3) ? Colors.green : Colors.white,
-                ),
-                IconButton(
-                  onPressed: () {
-                    setState(() {
-                      if (mode == 4) {
-                        mode = 0;
-                      } else {
-                        mode = 4;
-                      }
-                    });
-                  },
-                  icon: const Icon(Icons.arrow_forward),
-                  color: (mode == 4) ? Colors.pink.shade300 : Colors.white,
-                ),
-                IconButton(
-                  onPressed: () {
-                    if (mode != 7) {
-                      showMenu(
-                        context: context,
-                        position: RelativeRect.fromLTRB(
-                          MediaQuery.of(context).size.width / 2,
-                          MediaQuery.of(context).size.height - 50,
-                          MediaQuery.of(context).size.width / 2,
-                          0,
-                        ),
-                        items: [
-                          PopupMenuItem(
-                            value: 'max',
-                            child: Text('Max'),
-                          ),
-                          PopupMenuItem(
-                            value: 'min',
-                            child: Text('Min'),
-                          ),
-                        ],
-                      ).then((value) {
+          bottomNavigationBar: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: BottomAppBar(
+                color: Colors.blueGrey.shade700,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    IconButton(
+                      onPressed: () {
                         setState(() {
-                          if (value == 'max') {
-                            kruskalMSTmaximized = true;
-                          } else if (value == 'min') {
-                            kruskalMSTmaximized = false;
+                          if (mode == 1) {
+                            mode = 0;
+                          } else {
+                            mode = 1;
                           }
-                          mode = 7;
-                          KruskalMST(nodes, edges, kruskalMSTmaximized);
                         });
-                      });
-                    } else if (mode == 7) {
-                      setState(() {
-                        mode = 0;
-                        for (var edge in edges) {
-                          edge.isMST = null;
-                        }
-                      });
-                    }
-                  },
-                  icon: const Icon(Icons.insights),
-                  color: (mode == 7) ? Colors.cyan.shade700 : Colors.white,
-                ),
-                IconButton(
-                  onPressed: () {
-                    setState(() {
-                      if (mode == 8) {
-                        mode = 0;
-                      } else {
-                        mode = 8;
-                      }
-                    });
-                  },
-                  icon: const Icon(Icons.edit),
-                  color: (mode == 8) ? Colors.purple.shade700 : Colors.white,
-                ),
-                IconButton(
-                  onPressed: () {
-                      showMenu(
-                        context: context,
-                        position: RelativeRect.fromLTRB(
-                          MediaQuery.of(context).size.width / 2,
-                          MediaQuery.of(context).size.height - 50,
-                          MediaQuery.of(context).size.width / 2,
-                          0,
-                        ),
-                        items: [
-                          PopupMenuItem(
-                            value: 'zoomIn',
-                            child: Text('Zoom In'),
-                          ),
-                          PopupMenuItem(
-                            value: 'zoomOut',
-                            child: Text('Zoom Out'),
-                          ),
-                        ],
-                      ).then((value) {
+                      },
+                      icon: const Icon(Icons.add),
+                      color: (mode == 1) ? Colors.amber.shade400 : Colors.white,
+                    ),
+                    IconButton(
+                      onPressed: () {
                         setState(() {
-                          if (value == 'zoomIn'){
-                            nodes.forEach((node) {
-                              node.x = scaleLinearFromCenter(node.x, MediaQuery.of(context).size.width / 2);
-                              node.y = scaleLinearFromCenter(node.y, MediaQuery.of(context).size.height / 2);
-                            });
-                            edges.forEach((edge) {
-                              edge.midX = scaleLinearFromCenter(edge.midX, MediaQuery.of(context).size.width / 2);
-                              edge.midY = scaleLinearFromCenter(edge.midY, MediaQuery.of(context).size.height / 2);
-                            });
-                          } else if (value == 'zoomOut'){
-                            nodes.forEach((node) {
-                              node.x = scaleLinearFromCenter(node.x, MediaQuery.of(context).size.width / 2, 1/defaultScalingFactor);
-                              node.y = scaleLinearFromCenter(node.y, MediaQuery.of(context).size.height / 2, 1/defaultScalingFactor);
-                            });
-                            edges.forEach((edge) {
-                              edge.midX = scaleLinearFromCenter(edge.midX, MediaQuery.of(context).size.width / 2, 1/defaultScalingFactor);
-                              edge.midY = scaleLinearFromCenter(edge.midY, MediaQuery.of(context).size.height / 2, 1/defaultScalingFactor);
-                            });
+                          if (mode == 2) {
+                            mode = 0;
+                          } else {
+                            mode = 2;
                           }
-                      });
-                    });
-                  },
-                  icon: const Icon(Icons.zoom_in),
-                  color: Colors.white,
+                        });
+                      },
+                      icon: const Icon(Icons.delete),
+                      color: (mode == 2) ? Colors.red : Colors.white,
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        setState(() {
+                          if (mode == 3) {
+                            mode = 0;
+                          } else {
+                            mode = 3;
+                          }
+                        });
+                      },
+                      icon: const Icon(Icons.back_hand_rounded),
+                      color: (mode == 3) ? Colors.green : Colors.white,
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        setState(() {
+                          if (mode == 4) {
+                            mode = 0;
+                          } else {
+                            mode = 4;
+                          }
+                        });
+                      },
+                      icon: const Icon(Icons.arrow_forward),
+                      color: (mode == 4) ? Colors.pink.shade300 : Colors.white,
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        if (mode != 7) {
+                          showMenu(
+                            context: context,
+                            position: RelativeRect.fromLTRB(
+                              MediaQuery.of(context).size.width / 2,
+                              MediaQuery.of(context).size.height - 50,
+                              MediaQuery.of(context).size.width / 2,
+                              0,
+                            ),
+                            items: [
+                              PopupMenuItem(
+                                value: 'max',
+                                child: Text('Max'),
+                              ),
+                              PopupMenuItem(
+                                value: 'min',
+                                child: Text('Min'),
+                              ),
+                            ],
+                          ).then((value) {
+                            setState(() {
+                              if (value == 'max') {
+                                kruskalMSTmaximized = true;
+                              } else if (value == 'min') {
+                                kruskalMSTmaximized = false;
+                              }
+                              mode = 7;
+                              KruskalMST(nodes, edges, kruskalMSTmaximized);
+                            });
+                          });
+                        } else if (mode == 7) {
+                          setState(() {
+                            mode = 0;
+                            for (var edge in edges) {
+                              edge.isMST = null;
+                            }
+                          });
+                        }
+                      },
+                      icon: const Icon(Icons.insights),
+                      color: (mode == 7) ? Colors.cyan.shade700 : Colors.white,
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        setState(() {
+                          if (mode == 8) {
+                            mode = 0;
+                          } else {
+                            mode = 8;
+                          }
+                        });
+                      },
+                      icon: const Icon(Icons.edit),
+                      color:
+                          (mode == 8) ? Colors.purple.shade700 : Colors.white,
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        if (mode != 7) {
+                          showMenu(
+                            context: context,
+                            position: RelativeRect.fromLTRB(
+                              MediaQuery.of(context).size.width / 2,
+                              MediaQuery.of(context).size.height - 50,
+                              MediaQuery.of(context).size.width / 2,
+                              0,
+                            ),
+                            items: [
+                              PopupMenuItem(
+                                value: 'zoomIn',
+                                child: Text('Zoom In'),
+                              ),
+                              PopupMenuItem(
+                                value: 'zoomOut',
+                                child: Text('Zoom Out'),
+                              ),
+                            ],
+                          ).then((value) {
+                            setState(() {
+                              if (value == 'zoomIn') {
+                                zoomingIn = true;
+                              } else if (value == 'zoomOut') {
+                                zoomingIn = false;
+                              }
+                              mode = 5;
+                            });
+                          });
+                        } else if (mode == 5) {
+                          setState(() {
+                            mode = 0;
+                          });
+                        }
+                      },
+                      icon: const Icon(Icons.zoom_in),
+                      color: (mode == 5) ? Colors.orange : Colors.white,
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        showHelpDialog(context);
+                      },
+                      icon: const Icon(Icons.help),
+                      color: Colors.white,
+                    )
+                  ],
                 ),
-                IconButton(
-                  onPressed: () {
-                    showHelpDialog(context);
-                  },
-                  icon: const Icon(Icons.help),
-                  color: Colors.white,
-                )
-              ],
-            ),
-          ))),
+              ))),
     );
   }
 
@@ -415,7 +438,7 @@ class _EditorState extends State<Editor> {
               "2. Delete Node: Tap on a node or edge to delete it\n"
               "3. Move Node: Tap on a node or edge to select it, then tap on the screen to move it\n"
               "4. Add Edge: Tap on a node to select it, then tap on another node to add an edge\n"
-              "5. Find MST: Tap on the screen to find the Minimum Spanning Tree\n"
+              "5. Find MST: Tap on the screen to find the Minimum/Maximum Spanning Tree\n"
               "6. Edit Node/Edge: Tap on a node to change its name, tap on an edge to change its weight\n"
               "7. Zoom In/Out: Tap on the screen to zoom in/out\n"
               "8. Help: Tap on the help icon to show this dialog\n"),
@@ -476,11 +499,11 @@ class _EditorState extends State<Editor> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Change Edge Weight'),
-            content: TextField(
+          content: TextField(
             controller: edgeWeightController,
             decoration: const InputDecoration(labelText: 'Edge Weight'),
             keyboardType: TextInputType.number,
-            ),
+          ),
           actions: <Widget>[
             TextButton(
               child: const Text('Cancel'),

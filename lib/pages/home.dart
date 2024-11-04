@@ -18,20 +18,32 @@ class _HomeState extends State<Home> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
-            const DrawerHeader(
+            DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.blue,
+                  gradient: LinearGradient(colors: [
+                Colors.blue.shade600,
+                Colors.blue.shade500,
+                Colors.blue.shade400,
+              ])),
+              child: Column(
+                children: [
+                  Image.asset(
+                    'images/icons8-cloud-computing-64.png',
+                    height: 100,),
+                  Text(
+                    'Kruskal\'s MST Graph Editor',
+                    style: TextStyle(color: Colors.white, fontSize: 20),
+                  )
+                ],
               ),
-              child: Text('Editor de grafos con Kruskal'),
             ),
             // Add more items here if needed
             ListTile(
               title: const Text('About'),
               leading: Icon(Icons.info_outline),
               onTap: () {
-                Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => (AboutPage()))
-                );
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => (AboutPage())));
               },
             ),
             ListTile(
@@ -39,8 +51,7 @@ class _HomeState extends State<Home> {
               leading: Icon(Icons.insights_rounded),
               onTap: () {
                 Navigator.push(
-                  context, MaterialPageRoute(builder: (context) => Editor())
-                );
+                    context, MaterialPageRoute(builder: (context) => Editor()));
               },
             ),
           ],
@@ -51,7 +62,9 @@ class _HomeState extends State<Home> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.network('https://upload.wikimedia.org/wikipedia/commons/d/d2/Minimum_spanning_tree.svg', height: 200),
+            Image.network(
+                'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d2/Minimum_spanning_tree.svg/800px-Minimum_spanning_tree.svg.png',
+                height: 200),
             const SizedBox(height: 16.0),
             const Text(
               'Kruskal\'s Minimum Spanning Tree',
@@ -63,7 +76,9 @@ class _HomeState extends State<Home> {
               style: TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 16.0),
-            Image.network('https://images.stockcake.com/public/e/0/7/e07e8b9c-aff2-45bf-aff2-2b12d5df9480_large/industrial-pipe-network-stockcake.jpg', height: 200),
+            Image.network(
+                'https://images.stockcake.com/public/e/0/7/e07e8b9c-aff2-45bf-aff2-2b12d5df9480_large/industrial-pipe-network-stockcake.jpg',
+                height: 200),
             const SizedBox(height: 16.0),
             const Text(
               'Real-life Applications',
@@ -78,16 +93,16 @@ class _HomeState extends State<Home> {
             ),
             Center(
               child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
-                foregroundColor: Colors.white,
-              ),
-              onPressed: () {
-                Navigator.push(
-                context, MaterialPageRoute(builder: (context) => Editor())
-                );
-              },
-              child: const Text('Go to Editor', style: TextStyle(fontSize: 20)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                  foregroundColor: Colors.white,
+                ),
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => Editor()));
+                },
+                child:
+                    const Text('Go to Editor', style: TextStyle(fontSize: 20)),
               ),
             ),
           ],
