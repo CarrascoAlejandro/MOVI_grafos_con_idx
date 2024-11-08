@@ -370,7 +370,6 @@ class _EditorState extends State<Editor> {
                               List<Color> colors = generateRandomColors(edgesInMST.length -1);
                               print(colors);
                               for(int i = 0; i < (2*edgesInMST.length)-1; i++) {
-                                
                                 Future.delayed(Duration(milliseconds: 150 * i), () {
                                   setState(() {
                                     print("iteration: $i");
@@ -378,7 +377,7 @@ class _EditorState extends State<Editor> {
                                       int colorIndex = min(max(-1, i-j), colors.length-1);
                                       if(colorIndex != -1){
                                         edgesInMST[j].color = colors[colorIndex];
-                                        print("putting color: ${colors[colorIndex]} in edge: ${edgesInMST[j].startNode.label} - ${edgesInMST[j].endNode.label}");
+                                        // print("putting color: ${colors[colorIndex]} in edge: ${edgesInMST[j].startNode.label} - ${edgesInMST[j].endNode.label}");
                                       }
                                         
                                       
