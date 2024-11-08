@@ -27,11 +27,13 @@ class _HomeState extends State<Home> {
               ])),
               child: Column(
                 children: [
-                  Image.asset(
-                    'images/icons8-cloud-computing-64.png',
-                    height: 100,),
+                  Icon(
+                    Icons.insights_rounded,
+                    size: 100,
+                    color: Colors.white,
+                  ),
                   Text(
-                    'Kruskal\'s MST Graph Editor',
+                    'Kruskal\'s Graph Editor',
                     style: TextStyle(color: Colors.white, fontSize: 20),
                   )
                 ],
@@ -39,7 +41,7 @@ class _HomeState extends State<Home> {
             ),
             // Add more items here if needed
             ListTile(
-              title: const Text('About'),
+              title: const Text('Acerca del desarrollador'),
               leading: Icon(Icons.info_outline),
               onTap: () {
                 Navigator.push(context,
@@ -67,12 +69,12 @@ class _HomeState extends State<Home> {
                 height: 200),
             const SizedBox(height: 16.0),
             const Text(
-              'Kruskal\'s Minimum Spanning Tree',
+              'Algoritmo de Kruskal para árboles de expansión mínima',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16.0),
             const Text(
-              'Kruskal\'s algorithm is a minimum-spanning-tree algorithm which finds an edge of the least possible weight that connects any two trees in the forest. It is a greedy algorithm in graph theory as it finds a minimum spanning tree for a connected weighted graph adding increasing cost arcs at each step.',
+                'El algoritmo de Kruskal es un algoritmo de árbol de expansión mínima que encuentra un borde el árbol de menor peso total en un grafo no direccionado. Es un algoritmo greedy en teoría de grafos ya que encuentra un árbol de expansión mínima para un grafo ponderado conectado, agregando arcos de costo creciente en cada paso.',
               style: TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 16.0),
@@ -81,29 +83,31 @@ class _HomeState extends State<Home> {
                 height: 200),
             const SizedBox(height: 16.0),
             const Text(
-              'Real-life Applications',
+              'Aplicaciones de la vida real',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16.0),
             const Text(
-              '1. Network Design: Kruskal\'s algorithm can be used to design efficient networks, such as computer networks, telecommunications networks, and transportation networks.\n\n'
-              '2. Approximation Algorithms: It is used in various approximation algorithms for NP-hard problems, including the traveling salesman problem.\n\n'
-              '3. Cluster Analysis: Kruskal\'s algorithm is used in hierarchical clustering to build a minimum spanning tree of the data points.',
+                '1. Diseño de Redes: El algoritmo de Kruskal se puede utilizar para diseñar redes eficientes, como redes de computadoras, redes de telecomunicaciones y redes de transporte.\n\n'
+                '2. Algoritmos de Aproximación: Se utiliza en varios algoritmos de aproximación para problemas NP-difíciles, incluido el problema del vendedor viajero.\n\n'
+                '3. Análisis de Clústeres: El algoritmo de Kruskal se utiliza en el agrupamiento jerárquico para construir un árbol de expansión mínima de los puntos de datos.',
               style: TextStyle(fontSize: 16),
             ),
             Center(
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
+                child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue,
                   foregroundColor: Colors.white,
-                ),
-                onPressed: () {
+                  ),
+                  onPressed: () {
                   Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => Editor()));
-                },
-                child:
-                    const Text('Go to Editor', style: TextStyle(fontSize: 20)),
-              ),
+                    MaterialPageRoute(builder: (context) => Editor()));
+                  },
+                  child: const Text('Ir al Editor', style: TextStyle(fontSize: 20)),
+                ),
+                ),
             ),
           ],
         ),

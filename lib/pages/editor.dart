@@ -6,6 +6,7 @@ import 'package:flutter_on_class_011/utils/algorithm.dart';
 import 'package:flutter_on_class_011/components/figs.dart';
 import 'package:flutter_on_class_011/models/node_model.dart';
 import 'package:flutter_on_class_011/models/edge_model.dart';
+import 'package:flutter_on_class_011/utils/animation_colors.dart';
 import 'package:flutter_on_class_011/utils/node_name_generator.dart';
 import 'package:flutter_on_class_011/utils/node_utils.dart';
 import 'package:flutter_on_class_011/utils/scale_move_utils.dart';
@@ -26,6 +27,7 @@ class _EditorState extends State<Editor> {
   int selectedEdge = -1;
   bool kruskalMSTmaximized = true;
   bool zoomingIn = false;
+  String showingTreeTitle = 'Editor';
 
   // Random
   Random random = Random();
@@ -36,7 +38,9 @@ class _EditorState extends State<Editor> {
       debugShowCheckedModeBanner: false,
       home: Scaffold(
           appBar: AppBar(
-            title: const Text('Editor'),
+            title: (mode == 7)
+                ? Text('Árbol de Expansión $showingTreeTitle')
+                : Text('Editor'),
             actions: [
               // Go back to the home page
               IconButton(
@@ -110,6 +114,7 @@ class _EditorState extends State<Editor> {
                             if (selectedEdge != -1) {
                               // if edge was touched in bounds
                               edges[selectedEdge].isSelected = true;
+                              edges[selectedEdge].color = Colors.red;
                               print('Edge selected $selectedEdge');
                             } else {
                               // no edge nor node was touched
@@ -144,6 +149,7 @@ class _EditorState extends State<Editor> {
                               edges[selectedEdge].midY = cappedPoint[1];
                             }
                             edges[selectedEdge].isSelected = false;
+                            edges[selectedEdge].color = null;
                             selectedEdge = -1;
                             print('Edge moved');
                           }
@@ -210,15 +216,23 @@ class _EditorState extends State<Editor> {
                       } else {
                         nodes.forEach((node) {
                           node.x = scaleLinearFromCenter(
-                              node.x, details.localPosition.dx, 1/defaultScalingFactor);
+                              node.x,
+                              details.localPosition.dx,
+                              1 / defaultScalingFactor);
                           node.y = scaleLinearFromCenter(
-                              node.y, details.localPosition.dy, 1/defaultScalingFactor);
+                              node.y,
+                              details.localPosition.dy,
+                              1 / defaultScalingFactor);
                         });
                         edges.forEach((edge) {
                           edge.midX = scaleLinearFromCenter(
-                              edge.midX, details.localPosition.dx, 1/defaultScalingFactor);
+                              edge.midX,
+                              details.localPosition.dx,
+                              1 / defaultScalingFactor);
                           edge.midY = scaleLinearFromCenter(
-                              edge.midY, details.localPosition.dy, 1/defaultScalingFactor);
+                              edge.midY,
+                              details.localPosition.dy,
+                              1 / defaultScalingFactor);
                         });
                       }
                     } else if (mode == 8) {
@@ -346,7 +360,33 @@ class _EditorState extends State<Editor> {
                                 kruskalMSTmaximized = false;
                               }
                               mode = 7;
+                              showingTreeTitle = (kruskalMSTmaximized)
+                                  ? 'Máxima'
+                                  : 'Mínima';
                               KruskalMST(nodes, edges, kruskalMSTmaximized);
+                            });
+                            setState(() {
+                              List<EdgeModel> edgesInMST = edges.where((edge) => edge.isMST == true).toList();
+                              List<Color> colors = generateRandomColors(edgesInMST.length -1);
+                              print(colors);
+                              for(int i = 0; i < (2*edgesInMST.length)-1; i++) {
+                                
+                                Future.delayed(Duration(milliseconds: 150 * i), () {
+                                  setState(() {
+                                    print("iteration: $i");
+                                    for(int j = 0; j < edgesInMST.length; j++){
+                                      int colorIndex = min(max(-1, i-j), colors.length-1);
+                                      if(colorIndex != -1){
+                                        edgesInMST[j].color = colors[colorIndex];
+                                        print("putting color: ${colors[colorIndex]} in edge: ${edgesInMST[j].startNode.label} - ${edgesInMST[j].endNode.label}");
+                                      }
+                                        
+                                      
+                                    }
+
+                                  });
+                                });
+                              }
                             });
                           });
                         } else if (mode == 7) {
@@ -354,6 +394,7 @@ class _EditorState extends State<Editor> {
                             mode = 0;
                             for (var edge in edges) {
                               edge.isMST = null;
+                              edge.color = null;
                             }
                           });
                         }
@@ -434,14 +475,15 @@ class _EditorState extends State<Editor> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Help'),
-          content: const Text("1. Add Node: Tap on the screen to add a node\n"
-              "2. Delete Node: Tap on a node or edge to delete it\n"
-              "3. Move Node: Tap on a node or edge to select it, then tap on the screen to move it\n"
-              "4. Add Edge: Tap on a node to select it, then tap on another node to add an edge\n"
-              "5. Find MST: Tap on the screen to find the Minimum/Maximum Spanning Tree\n"
-              "6. Edit Node/Edge: Tap on a node to change its name, tap on an edge to change its weight\n"
-              "7. Zoom In/Out: Tap on the screen to zoom in/out\n"
-              "8. Help: Tap on the help icon to show this dialog\n"),
+          content: const Text(
+              "1. Añadir Nodo: Toca en la pantalla para añadir un nodo\n"
+              "2. Eliminar Nodo: Toca en un nodo o borde para eliminarlo\n"
+              "3. Mover Nodo: Toca en un nodo o borde para seleccionarlo, luego toca en la pantalla para moverlo\n"
+              "4. Añadir Arista: Toca en un nodo para seleccionarlo, luego toca en otro nodo para añadir una arista\n"
+              "5. Encontrar MST: Toca en la pantalla para encontrar el Árbol de Expansión Mínima/Máxima\n"
+              "6. Editar Nodo/Arista: Toca en un nodo para cambiar su nombre, toca en una arista para cambiar su peso\n"
+              "7. Acercar/Alejar: Toca en la pantalla para acercar/alejar\n"
+              "8. Ayuda: Toca en el icono de ayuda para mostrar este diálogo\n"),
           actions: <Widget>[
             TextButton(
               onPressed: () {

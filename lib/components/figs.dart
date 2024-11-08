@@ -57,13 +57,8 @@ class EdgePainter extends CustomPainter {
       ..style = PaintingStyle.fill;
 
     for (EdgeModel edge in edges) {
-      if(edge.isMST != null) {
-        paint.color = edge.isMST! ? Colors.cyan.shade700 : Colors.black;
-        fillPaint.color = edge.isMST! ? Colors.cyan.shade700 : Colors.black;
-      } else {
-        paint.color = edge.isSelected ? Colors.red : Colors.black;
-        fillPaint.color = edge.isSelected ? Colors.red : Colors.black;
-      }
+      paint.color = edge.color ?? Colors.black;
+      fillPaint.color = edge.color ?? Colors.black;
 
       // Draw the line
       Path path = Path();

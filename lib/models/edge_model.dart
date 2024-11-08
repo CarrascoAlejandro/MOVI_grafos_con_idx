@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_on_class_011/models/node_model.dart';
 
 class EdgeModel {
@@ -7,6 +8,7 @@ class EdgeModel {
   bool isSelected = false;
 
   bool? isMST;
+  Color? color;
 
   EdgeModel(this.startNode, this.endNode, this.distance, {this.isSelected = false}) {
     midX = (startNode.x + endNode.x) / 2;
